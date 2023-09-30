@@ -5,16 +5,16 @@
     <div class="m-3">
         <span class="mb-2">You are not part of any group</span>
         <br>
-        <button type="button" class="btn btn-primary mb-2">Create group</button>
+        <a class="btn btn-primary mb-2" href="{% url 'create_group' %}" role="button">Create group</a>
         <br>
-        <button type="button" class="btn btn-primary">Join group</button>
+        <a class="btn btn-primary" href="#" role="button">Join group</a>
     </div>
 
     <div>
         <h2>Group name</h2>
         <span>You have not set any goal</span>
         <br>
-        <button type="button" class="btn btn-primary mb-2">Set a goal</button>
+        <a class="btn btn-primary mb-2" href="{% url 'create_goal' %}" role="button">Set a goal</a>
         <h3>Goal name</h3>
         <span>Time left: </span>
         <br>

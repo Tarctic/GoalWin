@@ -7,12 +7,18 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
 from .models import User, Member, Group, Goal
-from .forms import GroupForm
+from .forms import GroupForm, GoalForm
 
 # Create your views here.
 def index(request):
 
-    return render(request, "goalwin/index.html",)
+    # Authenticated users view their inbox
+    if request.user.is_authenticated:
+        return render(request, "goalwin/index.html",)
+
+    # Everyone else is prompted to sign in
+    else:
+        return HttpResponseRedirect(reverse("login"))
 
 
 def login_view(request):
@@ -72,7 +78,7 @@ def register(request):
         return render(request, "goalwin/register.html")
     
 
-
+@login_required
 def create_group(request):
     
     if request.method=="GET":
@@ -81,21 +87,39 @@ def create_group(request):
         })
 
     if request.method=="POST":
-        title = request.POST.get('title')
+        name = request.POST.get('name')
         desc = request.POST.get('desc')
         admin = request.user
 
-        group = Group(title=title, desc=desc, admin=admin)
+        group = Group(name=name, desc=desc, admin=admin)
         group.save()
+
+        member = Member.objects.get(user=request.user)
+        member.group = group
 
         return HttpResponseRedirect(reverse("index"))
 
+@login_required
+def create_goal(request):
 
+    if request.method=="GET":
+        return render(request, "GoalWin/newgoal.html", {
+            "goalform" : GoalForm()
+        })
 
+    if request.method=="POST":
+        name = request.POST.get('name')
+        desc = request.POST.get('desc')
+        stake = request.POST.get('stake')
+        setter = request.user
 
-# TODO
-# test the following on shell:
-# admins create groups, so if admin account is deleted, delete the group
-# members join groups, if member account is deleted, do not delete group, just delete member
-# groups can be deleted, if group is deleted, do not delete members, just delete groups and goals
-# members create goals, if member is deleted, delete the goals
+        member = Member.objects.get(user=request.user)
+        group = member.group
+        
+        print(member)
+        print(group)
+
+        goal = Goal(name=name, desc=desc, stake=stake, setter=setter, group=group)
+        goal.save()
+
+        return HttpResponseRedirect(reverse("index"))
