@@ -9,6 +9,7 @@ class User(AbstractUser):
 
 class Group(models.Model):
     name = models.CharField(max_length=80)
+    desc = models.CharField(max_length=1000, null=True)
     admin = models.ForeignKey(User, on_delete=models.CASCADE, related_name="group_admin")
 
     def __str__(self):

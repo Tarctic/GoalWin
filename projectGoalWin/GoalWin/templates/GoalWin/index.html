@@ -1,6 +1,23 @@
-{% extends "auctions/layout.html" %}
+{% extends "GoalWin/layout.html" %}
 
 {% block body %}
-    <h2>GoalWin</h2>
+    
+    <div class="m-3">
+        <span class="mb-2">You are not part of any group</span>
+        <br>
+        <button type="button" class="btn btn-primary mb-2">Create group</button>
+        <br>
+        <button type="button" class="btn btn-primary">Join group</button>
+    </div>
 
+    <div>
+        <h2>Group name</h2>
+        <span>You have not set any goal</span>
+        <br>
+        <button type="button" class="btn btn-primary mb-2">Set a goal</button>
+        <h3>Goal name</h3>
+        <span>Time left: </span>
+        <br>
+        <span>Stake: </span>
+    </div>
 {% endblock %}

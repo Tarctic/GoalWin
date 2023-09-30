@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
 from .models import User, Member, Group, Goal
+from .forms import GroupForm
 
 # Create your views here.
 def index(request):
@@ -61,10 +62,33 @@ def register(request):
             return render(request, "goalwin/register.html", {
                 "message": "Username already taken."
             })
+        
+        person = Member(username=username, user=user)
+        person.save()
+
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "goalwin/register.html")
+    
+
+
+def create_group(request):
+    
+    if request.method=="GET":
+        return render(request, "GoalWin/newgroup.html", {
+            "groupform" : GroupForm()
+        })
+
+    if request.method=="POST":
+        title = request.POST.get('title')
+        desc = request.POST.get('desc')
+        admin = request.user
+
+        group = Group(title=title, desc=desc, admin=admin)
+        group.save()
+
+        return HttpResponseRedirect(reverse("index"))
 
 
 
