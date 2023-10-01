@@ -24,6 +24,9 @@ def index(request):
         else:
             groups = list(Group.objects.values_list('name', flat=True))
 
+        members_count = Member.objects.filter(group=group).count()
+        completed_goals_count = Goal.objects.filter(group=group, completed=True).count()
+
         user_winnings = 0  # this is if no group, no goal set or goal not completed, otherwise value will be modified later below
         user_completed = None
 
@@ -58,7 +61,6 @@ def index(request):
                     uncompleted_stakes = 0
                     for goal in uncompleted_goals:
                         uncompleted_stakes += goal.stake
-                    completed_goals_count = Goal.objects.filter(group=group, completed=True).count()
                     divided_winnings = uncompleted_stakes/completed_goals_count
                     user_winnings = goal.stake + divided_winnings
                 
@@ -69,6 +71,8 @@ def index(request):
             "goal": goal_name,
             "time_left": time_left,
             "stake": stake,
+            "total_members":members_count,
+            "completed_members":completed_goals_count,
             "user_completed": user_completed,
             "user_winnings": user_winnings,
         })

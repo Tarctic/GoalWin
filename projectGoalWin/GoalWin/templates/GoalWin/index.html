@@ -12,6 +12,10 @@
             <br>
             <span>Stake: {{stake}}</span>
             <br>
+            <span>Total members: {{total_members}}</span>
+            <br>
+            <span>Members who completed their goals: {{completed_members}}</span>
+            <br>
             {% if not user_completed and time_left != 0 %}
             <a class="btn btn-primary mb-2" href="{% url 'goal_completed' %}" role="button">Goal Completed</a>
             {% else %}
