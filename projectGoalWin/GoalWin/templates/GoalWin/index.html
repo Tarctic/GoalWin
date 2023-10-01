@@ -11,6 +11,19 @@
             <span>Time left: {{time_left}}</span>
             <br>
             <span>Stake: {{stake}}</span>
+            <br>
+            {% if not user_completed and time_left != 0 %}
+            <a class="btn btn-primary mb-2" href="{% url 'goal_completed' %}" role="button">Goal Completed</a>
+            {% else %}
+                {% if time_left != 0 %}
+                <div><h4>You have completed your goal</h4></div>
+                {% else %}
+                <div>
+                    <h2>Your winnings: ${{user_winnings}}</h2>
+                </div>
+                {% endif %}
+            
+            {% endif %}
         </div>
         {% else %}
         <div>

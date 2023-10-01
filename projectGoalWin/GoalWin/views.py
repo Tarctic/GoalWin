@@ -24,6 +24,9 @@ def index(request):
         else:
             groups = list(Group.objects.values_list('name', flat=True))
 
+        user_winnings = 0  # this is if no group, no goal set or goal not completed, otherwise value will be modified later below
+        user_completed = None
+
         try:
             goal = Goal.objects.get(setter=user)
         except:
@@ -35,11 +38,30 @@ def index(request):
             created_month = goal.creation.month
             now = datetime.now(timezone.utc)
             stake = goal.stake
-            if now.month==created_month:
+            user_completed = goal.completed
+
+
+            # TODO REMOVE BELOW 2 LINES AND UNCOMMENT THE NEXT
+            test_time = datetime(now.year,now.month,now.day,now.hour,32,tzinfo=timezone.utc)
+            print("is there time left?", now<=test_time)
+            if now<=test_time: # NOT TIME YET
+            # if now.month==created_month:
                 next_month = datetime(now.year,now.month+1,1,tzinfo=timezone.utc)
                 time_left = next_month-now
-            else:
-                time_left = timedelta()
+                print("Has user completed goal?", user_completed)
+
+            else: # TIME TO SHOW
+                time_left = 0
+                
+                if user_completed:
+                    uncompleted_goals = Goal.objects.filter(group=group, completed=False)
+                    uncompleted_stakes = 0
+                    for goal in uncompleted_goals:
+                        uncompleted_stakes += goal.stake
+                    completed_goals_count = Goal.objects.filter(group=group, completed=True).count()
+                    divided_winnings = uncompleted_stakes/completed_goals_count
+                    user_winnings = goal.stake + divided_winnings
+                
 
         return render(request, "goalwin/index.html", {
             "group": group_name,
@@ -47,6 +69,8 @@ def index(request):
             "goal": goal_name,
             "time_left": time_left,
             "stake": stake,
+            "user_completed": user_completed,
+            "user_winnings": user_winnings,
         })
 
     # Everyone else is prompted to sign in
@@ -169,3 +193,12 @@ def create_goal(request):
 
         return HttpResponseRedirect(reverse("index"))
 
+@login_required
+def goal_completed(request):
+    
+    if request.method=="GET":
+        goal = Goal.objects.get(setter=request.user)  # if user can join multiple groups, add group=group condition
+        goal.completed = True
+        goal.save()
+
+        return HttpResponseRedirect(reverse("index"))
