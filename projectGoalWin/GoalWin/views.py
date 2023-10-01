@@ -43,12 +43,12 @@ def index(request):
             stake = goal.stake
             user_completed = goal.completed
 
+            # TEST results and completion view - change minute count to whenever you will be ready to test
+            # test_time = datetime(now.year,now.month,now.day,now.hour,32,tzinfo=timezone.utc)
+            # print("is there time left?", now<=test_time)
+            # if now<=test_time: # NOT TIME YET
 
-            # TODO REMOVE BELOW 2 LINES AND UNCOMMENT THE NEXT
-            test_time = datetime(now.year,now.month,now.day,now.hour,32,tzinfo=timezone.utc)
-            print("is there time left?", now<=test_time)
-            if now<=test_time: # NOT TIME YET
-            # if now.month==created_month:
+            if now.month==created_month:
                 next_month = datetime(now.year,now.month+1,1,tzinfo=timezone.utc)
                 time_left = next_month-now
                 print("Has user completed goal?", user_completed)
