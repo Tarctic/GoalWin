@@ -18,9 +18,11 @@ def index(request):
 
         user = request.user        
         group = Member.objects.get(user=user).group
-        group_name = None
+        group_name = groups = None
         if group:
             group_name = group.name
+        else:
+            groups = list(Group.objects.values_list('name', flat=True))
 
         try:
             goal = Goal.objects.get(setter=user)
@@ -41,6 +43,7 @@ def index(request):
 
         return render(request, "goalwin/index.html", {
             "group": group_name,
+            "groups": groups,
             "goal": goal_name,
             "time_left": time_left,
             "stake": stake,
@@ -126,6 +129,18 @@ def create_group(request):
 
         member = Member.objects.get(user=request.user)
         member.group = group
+        member.save()
+
+        return HttpResponseRedirect(reverse("index"))
+    
+@login_required
+def join_group(request, joining_group):
+
+    if request.method=="GET":
+        member = Member.objects.get(user=request.user)
+        group = Group.objects.get(name=joining_group)
+        member.group = group
+        member.save()
 
         return HttpResponseRedirect(reverse("index"))
 
@@ -153,3 +168,4 @@ def create_goal(request):
         goal.save()
 
         return HttpResponseRedirect(reverse("index"))
+

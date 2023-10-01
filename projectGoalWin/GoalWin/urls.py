@@ -9,4 +9,5 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("create_group", views.create_group, name="create_group"),
     path("create_goal", views.create_goal, name="create_goal"),
+    path("join_group/<str:joining_group>/", views.join_group, name="join_group"),
 ]
