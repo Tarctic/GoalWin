@@ -5,7 +5,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from .models import User, Member, Group, Goal
 from .forms import GroupForm, GoalForm
@@ -18,22 +18,32 @@ def index(request):
 
         user = request.user        
         group = Member.objects.get(user=user).group
+        group_name = None
+        if group:
+            group_name = group.name
 
-        goal = Goal.objects.get(setter=user)
+        try:
+            goal = Goal.objects.get(setter=user)
+        except:
+            goal = goal_name = time_left = stake = None
+            
         time_left = None
         if goal:
+            goal_name = goal.name
             created_month = goal.creation.month
             now = datetime.now(timezone.utc)
+            stake = goal.stake
             if now.month==created_month:
                 next_month = datetime(now.year,now.month+1,1,tzinfo=timezone.utc)
                 time_left = next_month-now
             else:
-                time_left = datetime(0)
+                time_left = timedelta()
 
         return render(request, "goalwin/index.html", {
-            group: group,
-            goal: goal,
-            time_left: time_left
+            "group": group_name,
+            "goal": goal_name,
+            "time_left": time_left,
+            "stake": stake,
         })
 
     # Everyone else is prompted to sign in

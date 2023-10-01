@@ -1,7 +1,28 @@
 {% extends "GoalWin/layout.html" %}
 
 {% block body %}
-    
+
+    {% if group %}
+    <div>
+        <h2>{{group}}</h2>
+        {% if goal %}
+        <div>
+            <h3>Goal: {{goal}}</h3>
+            <span>Time left: {{time_left}}</span>
+            <br>
+            <span>Stake: {{stake}}</span>
+        </div>
+        {% else %}
+        <div>
+            <span>You have not set any goal</span>
+            <br>
+            <a class="btn btn-primary mb-2" href="{% url 'create_goal' %}" role="button">Set a goal</a>
+        </div>
+        {% endif %}
+
+    </div>
+
+    {% else %}
     <div class="m-3">
         <span class="mb-2">You are not part of any group</span>
         <br>
@@ -9,15 +30,7 @@
         <br>
         <a class="btn btn-primary" href="#" role="button">Join group</a>
     </div>
+    {% endif %}
 
-    <div>
-        <h2>Group name</h2>
-        <span>You have not set any goal</span>
-        <br>
-        <a class="btn btn-primary mb-2" href="{% url 'create_goal' %}" role="button">Set a goal</a>
-        <h3>Goal name</h3>
-        <span>Time left: </span>
-        <br>
-        <span>Stake: </span>
-    </div>
+
 {% endblock %}
