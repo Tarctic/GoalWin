@@ -5,6 +5,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from datetime import datetime, timezone
 
 from .models import User, Member, Group, Goal
 from .forms import GroupForm, GoalForm
@@ -14,7 +15,26 @@ def index(request):
 
     # Authenticated users view their inbox
     if request.user.is_authenticated:
-        return render(request, "goalwin/index.html",)
+
+        user = request.user        
+        group = Member.objects.get(user=user).group
+
+        goal = Goal.objects.get(setter=user)
+        time_left = None
+        if goal:
+            created_month = goal.creation.month
+            now = datetime.now(timezone.utc)
+            if now.month==created_month:
+                next_month = datetime(now.year,now.month+1,1,tzinfo=timezone.utc)
+                time_left = next_month-now
+            else:
+                time_left = datetime(0)
+
+        return render(request, "goalwin/index.html", {
+            group: group,
+            goal: goal,
+            time_left: time_left
+        })
 
     # Everyone else is prompted to sign in
     else:
